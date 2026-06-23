@@ -30,7 +30,6 @@ def _levels_config(watchlist_entry: dict) -> dict:
 class AlertEngine:
     def __init__(self, watchlist: dict):
         self.watchlist = watchlist
-        # One StockState per symbol — classifier mutates it in place each poll
         self.stock_states: dict[str, StockState] = {
             symbol: StockState() for symbol in watchlist
         }
@@ -52,9 +51,6 @@ class AlertEngine:
             )
             for event in events:
                 send_alert(event, symbol)
-                print(
-                    f"[alert_engine] {symbol} {event.alert_reason.upper()} "
-                    f"{event.level_type} {event.level} @ ₹{price:.2f}"
-                )
+                print(f"  → {symbol} {event.alert_reason.upper()} {event.level_type} {event.level} @ ₹{price:.2f}")
             all_events.extend(events)
         return all_events

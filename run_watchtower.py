@@ -22,7 +22,7 @@ def main():
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
         "YALGO Watchtower — started\n"
         f"Watching {n} symbols | Poll interval: 5 min\n"
-        f"ntfy topic: {ntfy_topic}\n"
+      f"ntfy topic: {'*' * 8}{ntfy_topic[-4:]}\n"
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     )
     print(banner)

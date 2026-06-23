@@ -1,0 +1,8 @@
+{
+  "_comment": "Wide ranges to catch API garbage only. NOT price targets.",
+  "RELIANCE":   [800,  2000],
+  "HATHWAY":    [5,    25],
+  "MTARTECH":   [3000, 15000],
+  "HINDCOPPER": [200,  900],
+  "ADANIENT":   [1000, 5000]
+}

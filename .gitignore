@@ -1,0 +1,42 @@
+# --- Secrets & environment ---
+.env
+*.env
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Logs & runtime data ---
+*.log
+logs/
+*.db
+*.sqlite3
+
+# --- Caches (price cache, etc.) ---
+.cache/
+cache/
+*.cache
+
+# --- OS / editor junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# --- Personal config (real stock list / S/R levels) ---
+# Keep the example committed, never the real one
+config/watchlist.json
+!config/watchlist.example.json

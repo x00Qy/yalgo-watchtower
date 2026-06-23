@@ -1,0 +1,7 @@
+# Phase 0 — skeleton only
+requests==2.32.3
+python-dotenv==1.0.1
+
+# Added in later phases (Twelve Data / RapidAPI / Angel One clients,
+# pandas for historical replay, etc.) — keep this file growing phase by phase,
+# don't pre-install things we don't need yet.

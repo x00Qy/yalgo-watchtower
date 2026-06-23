@@ -1,0 +1,23 @@
+{
+  "_comment": "Template file — committed to git. Copy to watchlist.json (gitignored) and fill in your real 10 stocks. Prices in INR.",
+  "stocks": {
+    "RELIANCE": {
+      "support": [
+        { "level": 2850, "note": "weekly demand zone" },
+        { "level": 2780, "note": "" }
+      ],
+      "resistance": [
+        { "level": 3050, "note": "" },
+        { "level": 3120, "note": "prior swing high" }
+      ]
+    },
+    "TCS": {
+      "support": [
+        { "level": 3400, "note": "" }
+      ],
+      "resistance": [
+        { "level": 3650, "note": "" }
+      ]
+    }
+  }
+}

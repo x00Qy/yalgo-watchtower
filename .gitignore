@@ -40,3 +40,6 @@ Thumbs.db
 # Keep the example committed, never the real one
 config/watchlist.json
 !config/watchlist.example.json
+
+test_live_price.py
+test_ntfy.py

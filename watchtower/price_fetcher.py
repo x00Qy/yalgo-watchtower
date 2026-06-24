@@ -1,6 +1,6 @@
 """Price fetcher — fallback chain orchestrator.
 
-Chain order: TwelveData (primary) → RapidAPI (fallback 1) → AngelOne (fallback 2)
+Chain order: TwelveData (primary) → RapidAPI (fallback 1) → AngelOne (fallback 2) → YahooFinance (fallback 3)
 
 fetch_prices() returns (dict[symbol, PriceQuote], list[str failures]).
 Results are cached for CACHE_TTL_SECONDS (30s by default).
@@ -17,6 +17,7 @@ from watchtower.price_providers.base import (
 from watchtower.price_providers.twelve_data import TwelveDataProvider
 from watchtower.price_providers.rapidapi import RapidAPIProvider
 from watchtower.price_providers.angel_one import AngelOneProvider
+from watchtower.price_providers.yahoo_finance import YahooFinanceProvider
 
 logger = logging.getLogger(__name__)
 
@@ -64,15 +65,12 @@ def fetch_prices(
     if not remaining:
         return results, []
 
-    # Build provider chain lazily at call time so unit test mocks are respected.
-    # Importing the module-level names here (not a pre-built list) means
-    # unittest.mock.patch('watchtower.price_fetcher.TwelveDataProvider', ...)
-    # correctly intercepts instantiation.
     import watchtower.price_fetcher as _self
     provider_classes = [
         _self.TwelveDataProvider,
         _self.RapidAPIProvider,
         _self.AngelOneProvider,
+        _self.YahooFinanceProvider,
     ]
 
     # Work through provider chain
@@ -80,11 +78,8 @@ def fetch_prices(
         if not remaining:
             break
 
-        # Capture name before instantiation — ProviderClass may be a Mock in tests
-        # and Mock objects raise AttributeError on __name__ after side_effect fires.
         provider_name = getattr(ProviderClass, "__name__", repr(ProviderClass))
 
-        # Attempt to instantiate (may raise ProviderNotConfigured)
         try:
             provider: PriceProvider = ProviderClass()
         except ProviderNotConfigured as e:
@@ -94,7 +89,6 @@ def fetch_prices(
             logger.warning("Provider %s init error: %s", provider_name, e)
             continue
 
-        # Attempt fetch
         try:
             batch = provider.fetch_batch(remaining)
         except ProviderNotConfigured as e:
@@ -107,16 +101,13 @@ def fetch_prices(
             logger.warning("Provider %s unexpected error: %s", ProviderClass.__name__, e)
             continue
 
-        # Accumulate results and update cache
         fetch_time = datetime.utcnow()
         for sym, quote in batch.items():
             results[sym] = quote
             _price_cache[sym] = (quote, fetch_time)
 
-        # Only pass unfilled symbols to next provider
         remaining = [s for s in remaining if s not in results]
 
-    # Anything still remaining is a failure
     failures = [f"No price data available for {sym}" for sym in remaining]
 
     return results, failures

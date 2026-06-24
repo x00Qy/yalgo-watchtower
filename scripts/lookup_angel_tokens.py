@@ -63,14 +63,17 @@ def find_tokens(symbols: list, master: list):
     not_found = []
 
     for sym in symbols:
-        target = f"{sym}-EQ"
         match = None
-        for item in master:
-            if (
-                item.get("symbol") == target
-                and item.get("exch_seg") == "NSE"
-            ):
-                match = item.get("token")
+        for suffix in ["-EQ", "-BE"]:
+            target = f"{sym}{suffix}"
+            for item in master:
+                if (
+                    item.get("symbol") == target
+                    and item.get("exch_seg") == "NSE"
+                ):
+                    match = item.get("token")
+                    break
+            if match:
                 break
         if match:
             results[sym] = match

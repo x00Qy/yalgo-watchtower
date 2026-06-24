@@ -116,17 +116,21 @@ def evaluate_poll(
             is_touch = (distance_class == "touch") or breached
 
             if is_touch:
-                alerts.append(AlertEvent(
-                    stock=stock_symbol,
-                    level=level,
-                    level_type=level_type,
-                    distance_pct=dist,
-                    alert_reason="touch",
-                    current_price=current_price,
-                    timestamp=current_time,
-                ))
-                # Always restart cooldown from NOW
-                state.cooldown_until = current_time + timedelta(hours=1)
+                # Silence only if price has clearly broken ABOVE resistance (>2% past level)
+                # Support breaks always fire — a support crash is always noteworthy
+                clearly_broken = breached and dist > 2.0 and level_type == "resistance"
+                if not clearly_broken:
+                    alerts.append(AlertEvent(
+                        stock=stock_symbol,
+                        level=level,
+                        level_type=level_type,
+                        distance_pct=dist,
+                        alert_reason="touch",
+                        current_price=current_price,
+                        timestamp=current_time,
+                    ))
+                    # Always restart cooldown on touch
+                    state.cooldown_until = current_time + timedelta(hours=1)
                 state.last_known_distance_state = "touch"
                 continue
 

@@ -7,6 +7,7 @@ from datetime import datetime
 from watchtower.price_fetcher import fetch_prices
 from watchtower.alert_engine import AlertEngine
 
+MARKET_OPEN = (9, 15)
 MARKET_CLOSE = (15, 30)
 
 
@@ -15,12 +16,21 @@ def _market_closed() -> bool:
     return (now.hour, now.minute) >= MARKET_CLOSE
 
 
+def _pre_market() -> bool:
+    now = datetime.now()
+    return (now.hour, now.minute) < MARKET_OPEN
+
+
 def run_poller(watchlist: dict, interval_seconds: int = 300) -> None:
     engine = AlertEngine(watchlist)
     while True:
         if _market_closed():
             print("\n[watchtower] Market closed — shutting down.")
             break
+        if _pre_market():
+            print(f"  ~ pre-market, waiting...")
+            time.sleep(60)
+            continue
         now_str = datetime.now().strftime("%H:%M:%S")
         print(f"\n[{now_str}] polling {len(watchlist)} symbols")
         try:
